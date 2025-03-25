@@ -1,0 +1,233 @@
+
+---
+title: "L0TFinv Vignette"
+author:
+- name: Tianhao Wang, and Canhong Wen
+- name: University Of Science And Technology Of China
+date: "2024-12-25"
+output:
+  html_document:
+    theme: united
+    highlight: tango
+    toc: yes
+    toc_float:
+      collapsed: no
+  pdf_document:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{L0TFinv Vignette}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(comment = "#>", warning=FALSE, message=FALSE)
+```
+
+```{r echo = FALSE}
+# Thanks to Yihui Xie for providing this code
+library(knitr)
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+   lines <- options$output.lines
+   if (is.null(lines)) {
+     return(hook_output(x, options))  # pass to default hook
+   }
+   x <- unlist(strsplit(x, "\n"))
+   more <- "..."
+   if (length(lines)==1) {        # first n lines
+     if (length(x) > lines) {
+       # truncate the output, but add ....
+       x <- c(head(x, lines), more)
+     }
+   } else {
+     x <- c(more, x[lines], more)
+   }
+   # paste these lines together
+   x <- paste(c(x, ""), collapse = "\n")
+   hook_output(x, options)
+ })
+```
+
+
+# Introduction
+`L0TFinv` is a toolkit for L0-regularized sparse approximation, which is used for change point detection. The package excels in both efficiency and accuracy of trend estimation and changepoint detection in segmented functions.
+
+Trend filtering is a typical method for nonparametric regression, including change point detection and time series segmentation. The commonly used trend filtering models is the L1 trend filtering model $(a)$ based on the difference matrix $\boldsymbol{D}^{(q+1)}$, as illustrated below.
+
+$$
+\min _{\boldsymbol{\alpha} \in \mathbb{R}^n} \frac{1}{2}\|\boldsymbol{y}-\boldsymbol{\alpha}\|_2^2 + \lambda\|\boldsymbol{D}^{(q+1)} \boldsymbol{\alpha}\|_{\ell_1}, \quad q=0,1,2, \ldots. \quad (a) 
+$$
+In previous studies, algorithms solving trend filtering problems $(a)$ necessitate the computation of $((\boldsymbol{D}^{(q+1)})^T \boldsymbol{D}^{(q+1)})^{-1}$. When $n$ is large, just fitting the matrix into memory becomes an issue. L0 trend filtering $(b)$ has a advantage over other trend filtering methods, especially in the detection of change points. The expression for L0 trend filtering is as follows:
+
+$$
+\min _{\boldsymbol{\alpha} \in \mathbb{R}^n} \frac{1}{2}\|\boldsymbol{y}-\boldsymbol{\alpha}\|_2^2 + \lambda\|\boldsymbol{D}^{(q+1)} \boldsymbol{\alpha}\|_{\ell_0}. \quad (b)  
+$$
+In L0 trend filtering $(b)$, the positions of non-zero elements in the L0 norm correspond with the locations of change points. We consider two subsets: the active set $A$ for non-zero elements and the inactive set $I$ for zero elements.
+Despite this, computing $((\boldsymbol{D}^{(q+1)}_I)^T \boldsymbol{D}^{(q+1)}_I)^{-1}$ remains a task involving a substantial matrix. We explore transforming the problem $(b)$ into a L0-regularized sparse format $(c)$ by introducing an artificial design matrix $\boldsymbol{X}^{(q+1)}$ that corresponds to the difference matrix, thereby reformulating the L0 trend filtering problem into the following format.
+
+$$
+\min _{\boldsymbol{\beta} \in \mathbb{R}^n} \frac{1}{2}\|\boldsymbol{y}-\boldsymbol{X}^{(q+1)}\boldsymbol{\beta}\|_2^2 + \lambda \sum_{i=q+2}^n |\boldsymbol{\beta}_i|_{\ell_0}. \quad (c) 
+$$
+Due to the connection between L0 constraint problems and L0 penalty problems, and considering that the sparsity of $\boldsymbol{\beta}$ is is more meaningful in practical applications than the selection of the hyperparameter $\lambda$.
+We focus on the constraint that reflects our aim to achieve an estimated trend with a given number of change points. So we transform the L0 penalty problem $(c)$ into the L0 constraint problem $(d)$.
+
+In our practical approach, we consider the maximum number of change points $k_{\text{max}}$ as a constraint, transforming the aforementioned L0 penalty problem $(c)$ into the following L0 constraint problem.
+
+$$
+\text{ minimize }\frac{1}{2}\|\boldsymbol{y}-\boldsymbol{X}^{(q+1)}\boldsymbol{\beta}\|_2^2,\quad \text{ subject to } \sum_{i=q+2}^n |\boldsymbol{\beta}_i|_{\ell_0} \leq k_{\text{max}}. \quad (d)
+$$
+
+As previously discussed, the computation of $((\boldsymbol{D}^{(q+1)}_I)^T \boldsymbol{D}^{(q+1)}_I)^{-1}$ remains a substantial challenge, particularly under constraints of sparsity where $|A| \ll n$, resulting in a very large matrix. However, when transforming the problem $(b)$ into the problem $(d)$, we only need to calculate a relatively small matrix $((\boldsymbol{X}^{(q+1)}_A)^T \boldsymbol{X}^{(q+1)}_A)^{-1}$, which involves computational simplifications. For such L0 constraint problems $(d)$, we employ a splicing-based approach to design algorithms for processing. Many computational tricks are used to speed up the algorithms and improve the solution quality including warm starts, the active set search, splicing methods and the simplification of $((\boldsymbol{X}^{(q+1)}_A)^T \boldsymbol{X}^{(q+1)}_A)^{-1}$. 
+
+In this vignette, we provide a tutorial on using the R interface. Particularly, we will demonstrate how to use L0TFinv’s main functions for fitting models, change point detection, trend estimation and visualization.
+
+# Installation
+
+L0TFinv can be installed by executing:
+
+```{r, eval=FALSE}
+install.packages("L0TFinv_1.0.1.tar.gz", repos = NULL, type = "source")
+```
+
+Please proceed to install and load the subsequent R packages.
+
+```{r, eval=FALSE}
+if(!require(ggplot2)) install.packages("ggplot2")
+if(!require(Matrix)) install.packages("Matrix")
+if(!require(stats)) install.packages("stats")
+```
+
+# Tutorial
+
+`L0TFinv` package is well suited to analyzing time series with underlying piecewise constant or piecewise linear trends. First we load L0TFinv:
+
+```{r, results="hide"}
+library(L0TFinv)
+```
+
+We will start by fitting a simple L0-regularized sparse model and then move on to present the results of change point detection and trend estimation.
+
+## Fitting L0-regularized Sparse Models
+
+### Special Structure Matrix
+
+Before demonstrating how L0TFinv works, we will first describe the structure matrix $\boldsymbol{D}^{(q+1)}$ for the original problem $(b)$ and the matrix $\boldsymbol{X}^{(q+1)}$ for the transformed problem $(d)$. 
+
+```{r}
+n = 10
+q = 1
+D <- DiffMat(n, q)
+X <- XMat(n, q)
+```
+
+The elements of $\boldsymbol{D}^{(q+1)}$ are related to combination numbers, while the elements of $\boldsymbol{X}^{(q+1)}$ are associated with the cumulative sum function. Additionally, $\boldsymbol{D}^{(q+1)}\boldsymbol{X}^{(q+1)}$ has a special structure, details of which can be found in `XMat` function. Another special structure matrix is denoted as $(\boldsymbol{X}^{(q+1)}_A)^T \boldsymbol{X}^{(q+1)}_A$ and the solMat function simplifies the computation of this matrix inverse ( $A$ is the active set ), commonly employed in splicing algorithms. For more details, see the `solMat` function.
+
+```{r}
+print(D)
+print(X)
+print(D%*%X)
+```
+
+### Simulated Data
+
+In this part, we generate two types of underlying trends for time series segmentation, piecewise constant or piecewise linear. The observation point $\boldsymbol{y}$ is generated as follows:
+
+$$
+\boldsymbol{y}=\boldsymbol{X}^{(q+1)}\boldsymbol{\beta}+\boldsymbol{\epsilon},\quad q=0,1.
+$$
+The matrix $\boldsymbol{X}^{(q+1)}$ is as previously defined, with $\boldsymbol{\epsilon}$ representing iid standard normal entries, and $\boldsymbol{\beta}$ being the coefficients that contain the information of the segmented functions. The constraints on the change points of the trend are transformed into sparsity constraints on the $\boldsymbol{\beta}$ parameters. Most of the $\boldsymbol{\beta}$'s positional components are zero, with non-zero values only at the corresponding change points. 
+
+For both types of trends, we require inputs for $n$ (the number of data points), $sigma$ (the variance of the normal distribution), $seed$ (to ensure reproducibility by fixing the seed), and $tau$ (the positions of the change points, standardized to the interval [0, 1] for ease of processing).
+
+The change points of  $length(tau)$ divides the interval $[0,1]$ into $length(tau)+1$ segments. Additionally, we require a vector $h$ of $length(tau)+1$ to describe the information. For a piecewise constant trend, we need to input  $length(tau)+1$ constant values to represent the piecewise constant function, as illustrated below.
+
+```{r}
+tau = c(0.2, 0.3, 0.5, 0.65, 0.85)
+h = c(-1,3,-2,0,4,-3)
+BlocksData <- SimuBlocksInv(n = 500, sigma = 0.1, seed = 50, tau = tau ,h = h)
+plot(BlocksData$x, BlocksData$y, xlab="", ylab="") ## The piecewise linear simulated data
+lines(BlocksData$x, BlocksData$y0, col = "red") ## The underlying trend
+print(BlocksData$setA) ## The set of position indicators of change points
+print(BlocksData$tau)
+```
+
+For a piecewise linear trend, input a vector $h$ of $length(tau)+1$ to represent the slope of each linear segment. It is also necessary to define the initial value, denoted as $a_0$.
+
+```{r}
+tau1 = c(0.1, 0.3, 0.4, 0.7, 0.9)
+h1 = c(-2, 5, -3, 2, -1, 4)
+a0 = -10
+WaveData <- SimuWaveInv(n = 500, sigma = 0.1, seed = 50, tau = tau1, h = h1, a0 = a0)
+plot(WaveData$x, WaveData$y, xlab="", ylab="")
+lines(WaveData$x, WaveData$y0, col = "red")
+print(WaveData$setA)
+print(WaveData$tau)
+```
+
+### Fitting Models
+
+There are two ways to fit models, fixed change points or optimal change points. Both methods require inputting data points, the order $q$ ( piecewise constant or piecewise linear fitting ) and the maximum possible interval $[first , last]$ for change points to occur ( with the entire range being $[0 , 1]$ ). 
+
+For the case of the fixed change points, we need to additionally define the given number $k$ of change points. Since it involves warm starts, the final results will include scenarios where the number of change points varies from 1 to $k$.
+
+```{r}
+FitBlocks.fix <- L0TFinv.fix(y=BlocksData$y, k=10, q=0, first=0.01, last=1)
+FitWave.fix <- L0TFinv.fix(y=WaveData$y, k=8, q=1, first=0, last=0.99)
+```
+
+For the case of the optimal change points, we need to additionally define the maximum number $k_{max}$ of change points. The final results will include scenarios where the number of change points varies from 1 to $k_{max}$. And we need to specify the $sic$ or $bic$ penalty term to select the optimal number.
+
+```{r}
+FitBlocks.opt <- L0TFinv.opt(y=BlocksData$y, kmax=20, q=0, first=0.01, last=1, penalty="sic")
+FitWave.opt <- L0TFinv.opt(y=WaveData$y, kmax=15, q=1, first=0, last=0.99, penalty="bic")
+```
+
+## Change Point Detection and Trend Estimation
+
+The outcomes of model fitting can be primarily categorized into three components, the results of change point detection ($A$), the estimation of trends ( $\hat{y}$ ), and the estimation of model parameters ( $\hat{\boldsymbol{\beta}}$ ). The results obtained from the warm start will be denoted as $A.all$, $beta.all$, and $y.all$ respectively. `coef` function can extract and output the model's results for a given number $k$ of change points. If the value of $k$ is not provided, it will output $A.all$, $beta.all$ and $y.all$.
+
+```{r}
+coef(FitBlocks.fix, k=6)
+coef(FitBlocks.opt, k=FitBlocks.opt$kopt)
+```
+
+```{r, eval=FALSE}
+coef(FitBlocks.fix)
+coef(FitWave.opt)
+```
+
+In addition to the above results, `print` function can also output the 'mse', 'bic' and 'sic' results, demonstrating the process of selecting the optimal change points.
+
+```{r}
+print(FitBlocks.opt)[["mse"]]
+print(FitBlocks.opt)[["bic"]]
+print(FitBlocks.opt)[["sic"]]
+```
+
+There is another function called TFmetrics that is widely used in simulation experiments. It outputs four trend filtering metrics between the underlying trend and the data points, denoted as 'MSE', 'MAD', 'dH', and 'nknot'. For details, see the definition of the `TFmetrics` function.
+
+```{r}
+metrics <- TFmetrics(BlocksData$y0,BlocksData$tau,FitBlocks.opt$yopt,FitBlocks.opt$Aopt/length(BlocksData$y0))
+print(metrics)
+```
+
+## Visualization
+
+The `plot` function is used for visualizing the output results, capable of drawing graphs that show how 'mse', 'bic' and 'sic' change with the number of change points, as well as the fitting trend charts under a given number of change points.
+
+```{r}
+plot(FitBlocks.opt,type="yhat")
+plot(FitBlocks.opt,type="bic")
+plot(FitWave.opt,type="yhat",k=4)
+plot(FitWave.opt,type="mse")
+```
+
+
+# References
+
+Kim SJ, Koh K, Boyd SP and Gorinevsky DM. L1 Trend Filtering. Society for Industrial and Applied Mathematics (2009).
+
+Wen C, Wang X and Zhang A. L0 Trend Filtering. INFORMS Journal on Computing (2023).
+
+
