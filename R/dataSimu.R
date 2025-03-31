@@ -102,3 +102,5 @@ The maximum possible range for the change points should be within [0,1]")
   y = y0 + sigma*rnorm(n)
   return(list(x = x, y = y, y0 = y0, setA = A,  tau = tau))
 }
+
+             
