@@ -1,5 +1,4 @@
 
-
 #' @title Plot L0TFinvfix or L0TFinvopt object
 #'
 #' @description Plots a summary of L0TFinvfix or L0TFinvopt
