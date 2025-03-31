@@ -1,5 +1,4 @@
 
-
 #' @title Print L0TFinvfix or L0TFinvopt object
 #' @description Prints a summary of L0TFinvfix or L0TFinvopt
 #' @param x The output of L0TFinvfix or L0TFinvopt
