@@ -35,3 +35,4 @@ print(S2)
 print(round(S2\%*\%t(mat2)\%*\%mat2,10))
 }
 
+
