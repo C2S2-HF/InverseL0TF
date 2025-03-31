@@ -34,3 +34,4 @@ S2 <- solMat(n = 15, q = 1, A = A2)
 print(S2)
 print(round(S2\%*\%t(mat2)\%*\%mat2,10))
 }
+
