@@ -1,5 +1,4 @@
 
-
 #' @title Extract estimated trends
 #' @description Extract the coefficients of the estimated trends under the constraint of a given number of change points.
 #' @param object The output of L0TFinvfix or L0TFinvopt
