@@ -290,5 +290,5 @@ The maximum possible range for the change points should be within [0,1]")
   return(G)
 }
 
-
+               
 
