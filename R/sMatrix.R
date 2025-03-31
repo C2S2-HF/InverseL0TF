@@ -73,4 +73,3 @@ XMat <- function(n, q){
 
 
 
-
