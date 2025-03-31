@@ -17,3 +17,5 @@ export(solMat)
 import(ggplot2)
 importFrom(Matrix,solve)
 importFrom(stats,rnorm)
+
+
