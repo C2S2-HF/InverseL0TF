@@ -1,5 +1,4 @@
 
-
 #' @title Print four metrics about change point detection results
 #' @description Prints four metrics to compare the quality of change point detection results.
 #' @param y0 The underlying trend
