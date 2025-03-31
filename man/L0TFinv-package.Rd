@@ -46,4 +46,3 @@ Kim SJ, Koh K, Boyd SP and Gorinevsky DM. L1 Trend Filtering. Society for Indust
 
 Wen C, Wang X and Zhang A. L0 Trend Filtering. INFORMS Journal on Computing (2023).
 }
-
