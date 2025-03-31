@@ -40,3 +40,4 @@ plot(res1,type="yhat",k=5)
 plot(res1,type="mse")
 
 }
+
