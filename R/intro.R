@@ -40,3 +40,4 @@
 #'
 #' Wen C, Wang X and Zhang A. L0 Trend Filtering. INFORMS Journal on Computing (2023).
 NULL
+
