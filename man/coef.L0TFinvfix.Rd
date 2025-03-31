@@ -20,3 +20,5 @@ Extract the coefficients of the estimated trends under the constraint of a given
 \seealso{
 \code{\link{print.L0TFinvfix}}
 }
+
+
