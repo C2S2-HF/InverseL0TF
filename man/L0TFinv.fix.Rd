@@ -59,3 +59,5 @@ lines(WaveData$x, res1$yk, col = "lightgreen")
 \seealso{
 \code{\link{L0TFinv.opt}}
 }
+
+
