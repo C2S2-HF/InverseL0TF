@@ -50,8 +50,8 @@ TFmetrics <- function(y0, tau=NULL, yhat, cpts = NULL){
     screening.dist = max(apply(distm, 2, min))/n
     precision.dist = max(apply(distm, 1, min))/n
     haus.dist = max(screening.dist, precision.dist)
+    tab = data.frame(MSE=mse, MAD=mad, dH=haus.dist, nknot=n.cpts)
   }
-  tab = data.frame(MSE=mse, MAD=mad, dH=haus.dist, nknot=n.cpts)
   return(tab)
 }
 
