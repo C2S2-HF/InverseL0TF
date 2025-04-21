@@ -1,7 +1,7 @@
 Package: L0TFinv
 Type: Package
 Title: A splicing approach to the inverse problem of L0 trend filtering
-Version: 1.0.1
+Version: 0.1.0
 Date: 2024-12-25
 Author: Tianhao Wang, Canhong Wen
 Maintainer: Tianhao Wang <tianhaowang@mail.ustc.edu.cn>
