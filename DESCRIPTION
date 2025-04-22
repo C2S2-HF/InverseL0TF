@@ -10,7 +10,7 @@ License: MIT + file LICENSE
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 Imports: ggplot2, Matrix, stats
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 URL: http://github.com/C2S2-HF/InverseL0TF
 BugReports: http://github.com/C2S2-HF/InverseL0TF/issues
