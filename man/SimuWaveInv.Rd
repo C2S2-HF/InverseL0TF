@@ -43,4 +43,3 @@ print(WaveData$tau)
 \seealso{
 \code{\link{SimuBlocksInv}}
 }
-

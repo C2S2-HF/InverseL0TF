@@ -37,5 +37,3 @@ print(Mat1\%*\%mat1)
 print(Mat2\%*\%mat2)
 print(Mat3\%*\%mat3)
 }
-
-

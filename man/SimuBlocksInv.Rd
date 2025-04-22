@@ -43,4 +43,3 @@ lines(BlocksData$x, BlocksData$y0, col = "red")
 print(BlocksData$setA)
 print(BlocksData$tau)
 }
-

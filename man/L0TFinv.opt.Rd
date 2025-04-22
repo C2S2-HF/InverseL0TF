@@ -63,4 +63,3 @@ lines(WaveData$x, WaveData$y0, col = "red")
 lines(WaveData$x, res1$yopt, col = "lightgreen")
 
 }
-

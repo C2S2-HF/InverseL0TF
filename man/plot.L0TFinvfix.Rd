@@ -26,4 +26,3 @@ Plots a summary of L0TFinvfix or L0TFinvopt
 \seealso{
 \code{\link{print.L0TFinvfix}}
 }
-
