@@ -1,19 +1,25 @@
 Package: L0TFinv
 Type: Package
-Title: A splicing approach to the inverse problem of L0 trend filtering
-Version: 0.1.0
-Date: 2024-12-25
-Author: Tianhao Wang, Canhong Wen
+Title: A Splicing Approach to the Inverse Problem of L0 Trend Filtering
+Version: 1.0.0
+Date: 2025-5-25
 Maintainer: Tianhao Wang <tianhaowang@mail.ustc.edu.cn>
-Description: This package provides an efficient solution for L0 trend filtering, avoiding the traditional methods of using Lagrange duality or ADMM  algorithms. It employ a splicing approach that minimizes L0-regularized sparse approximation by transforming the L0 trend filtering problem. The package excels in both efficiency and accuracy of trend estimation and changepoint detection in segmented functions.
-License: MIT + file LICENSE
+Authors@R: c(person(given = "Tianhao",
+                      family = "Wang",
+                      role = c("aut", "cre"),
+                      email = "tianhaowang@mail.ustc.edu.cn"),
+               person(given = "Canhong",
+                      family = "Wen",
+                      role = "aut",
+                      email = "wench@ustc.edu.cn"))
+Description: Trend filtering is a widely used nonparametric method for knot detection. This package provides an efficient solution for L0 trend filtering, avoiding the traditional methods of using Lagrange duality or Alternating Direction Method of Multipliers  algorithms. It employ a splicing approach that minimizes L0-regularized sparse approximation by transforming the L0 trend filtering problem. The package excels in both efficiency and accuracy of trend estimation and changepoint detection in segmented functions.
+License: GPL (>= 3)
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 Imports: ggplot2, Matrix, stats
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
-URL: http://github.com/C2S2-HF/InverseL0TF
-BugReports: http://github.com/C2S2-HF/InverseL0TF/issues
+URL: https://github.com/C2S2-HF/InverseL0TF
 
 
 
