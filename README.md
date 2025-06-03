@@ -17,15 +17,15 @@ library(devtools)
 install_github("C2S2-HF/InverseL0TF", repos = NULL, type = "source")
 ```
 
-Alternatively, you can run the following code in R to install `L0TFinv` after downloading [L0TFinv_0.1.0.tar.gz](./L0TFinv_0.1.0.tar.gz).
+Alternatively, you can run the following code in R to install `L0TFinv` after downloading `L0TFinv_1.0.0.tar.gz`.
 
 ```r
-install.packages("Your_download_path/L0TFinv_0.1.0.tar.gz", repos = NULL, type = "source")
+install.packages("Your_download_path/L0TFinv_1.0.0.tar.gz", repos = NULL, type = "source")
 ```
 
 ## Usage
 
-For a tutorial, please refer to [L0TFinv's Vignette](./vignettes). 
+For a tutorial, please refer to `L0TFinv's Vignette`. 
 
 
 
