@@ -4,7 +4,7 @@ title: "L0TFinv Vignette"
 author:
 - name: Tianhao Wang, and Canhong Wen
 - name: University Of Science And Technology Of China
-date: "2024-12-25"
+date: "2025-5-25"
 output:
   html_document:
     theme: united
